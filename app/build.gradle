@@ -44,6 +44,5 @@ dependencies {
     //anko
     implementation 'org.jetbrains.anko:anko-common:0.9'
     //ftp
-    //implementation 'it.sauronsoftware', name: 'ftp4j', version: '1.6'
     implementation files('libs/ftp4j-1.7.2.jar')
 }

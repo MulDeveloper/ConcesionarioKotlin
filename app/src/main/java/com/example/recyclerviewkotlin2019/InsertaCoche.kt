@@ -21,18 +21,16 @@ import android.provider.MediaStore
 import androidx.core.app.ActivityCompat
 import android.content.pm.PackageManager
 import androidx.core.content.ContextCompat
-
-
-
-
-
+import kotlinx.android.synthetic.main.activity_inserta_coche.*
 
 
 class InsertaCoche : AppCompatActivity() {
 
     var imageUri:Uri? = null
 
-    var ruta:String? = ""
+    var ruta:String = ""
+
+    var t = Thread()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,31 +40,48 @@ class InsertaCoche : AppCompatActivity() {
 
     fun insertarCoche(v: View){
         //esta funcion convierte un objeto coche en un objeto json y se lo manda a la bd
-        //subimos la imagen seleccionada al ftp con simpleftp
+
+        //creamos objeto coche
+        val coche = Coche(et_matricula.text.toString(), et_marca.text.toString(), et_modelo.text.toString(),
+            et_precio.text.toString().toDouble(), et_comb.text.toString(), "")
+
 
         subeImagen()
 
-        //obtener la ruta en la subida al ftp
-        val ruta = ""
 
-        //creamos el objeto coche
-        val coche = Coche("5555ZZZ", "NISSAN", "QASHQAI",
-            24000.00, "GASOLINA", ruta)
 
-        //trnasformamos el coche en json
-        val gson = Gson()
-        val stringJson = "["+gson.toJson(coche)+"]"
+        val tdos = Thread(Runnable{
 
-        println(stringJson)
+            //obtener la ruta de la imagen
+            val res = "http://iesayala.ddns.net/christian/imagenes/"+ruta
+            coche.ruta = res
 
-        doAsync {
+            //trnasformamos el coche en json
+            val gson = Gson()
+            val stringJson = "["+gson.toJson(coche)+"]"
+
+            println(stringJson)
+
+
+
             val url = "http://iesayala.ddns.net/christian/php/insertarCoches.php"
 
             post(url, stringJson)
 
-        }
+
+        })
+
+        t.start()
+        t.join()
+        tdos.start()
+
+
+        finish()
+
 
     }
+
+
 
     fun fotoGaleria(v: View){
         val photoPickerIntent = Intent(Intent.ACTION_PICK)
@@ -90,9 +105,7 @@ class InsertaCoche : AppCompatActivity() {
 
     fun subeImagen(){
 
-        println(imageUri)
-
-        Thread({
+        t = Thread(Runnable{
             try {
                 val mFtpClient = FTPClient()
                 mFtpClient.connect("80.26.235.16", 21)
@@ -104,16 +117,31 @@ class InsertaCoche : AppCompatActivity() {
 
                 //obtener la ruta de la imagen
 
-                val ruta = obtenerRuta(imageUri!!)
+                val rut = obtenerRuta(imageUri!!)
 
-                mFtpClient.upload(File(ruta))
+                val index = rut!!.lastIndexOf('/')
+
+                println(index)
+
+                ruta = rut!!.substring(index+1,rut.length)
+
+                println(ruta)
+
+
+
+                mFtpClient.upload(File(rut))
+                mFtpClient.sendSiteCommand("chmod " + "777 " + "/imagenes/"+ruta)
                 mFtpClient.disconnect(true)
+
+
 
             } catch (e: Exception) {
                 e.printStackTrace()
             }
 
-        }).start()
+        })
+
+
 
 
     }

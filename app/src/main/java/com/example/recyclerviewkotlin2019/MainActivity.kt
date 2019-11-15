@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+
     var listaCoches: ArrayList<Coche> = arrayListOf()
 
 
@@ -41,6 +42,7 @@ class MainActivity : AppCompatActivity() {
 
 
     }
+
 
 
     fun listar(v: View){
@@ -86,35 +88,6 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this, InsertaCoche::class.java)
         startActivity(intent)
     }
-
-    /*
-
-    fun insertarCoche(v: View){
-        //esta funcion convierte un objeto coche en un objeto json y se lo manda a la bd
-        //subimos la imagen seleccionada al ftp con simpleftp
-
-        //obtener la ruta en la subida al ftp
-        val ruta = ""
-
-        //creamos el objeto coche
-        val coche = Coche("5555ZZZ", "NISSAN", "QASHQAI",
-            24000.00, "GASOLINA", ruta)
-
-        //trnasformamos el coche en json
-        val gson = Gson()
-        val stringJson = "["+gson.toJson(coche)+"]"
-
-        println(stringJson)
-
-        doAsync {
-            val url = "http://iesayala.ddns.net/christian/php/insertarCoches.php"
-
-            post(url, stringJson)
-
-        }
-
-    }
-        */
 
 
 }
