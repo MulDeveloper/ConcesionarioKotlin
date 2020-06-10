@@ -108,8 +108,8 @@ class InsertaCoche : AppCompatActivity() {
         t = Thread(Runnable{
             try {
                 val mFtpClient = FTPClient()
-                mFtpClient.connect("80.26.235.16", 21)
-                mFtpClient.login("christian", "password")
+                mFtpClient.connect("*****IP*****", 21)
+                mFtpClient.login("*********USERNAME*******", "******PASS******")
                 mFtpClient.type = FTPClient.TYPE_BINARY
                 mFtpClient.setPassive(true)
                 mFtpClient.noop()
